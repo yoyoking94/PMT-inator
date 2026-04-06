@@ -27,8 +27,6 @@ export class DetailTache implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // On écoute les changements de paramètres de route au lieu de snapshot
-    // Cela permet de recharger les données si on revient sur la même page
     this.route.paramMap.subscribe(parametres => {
       this.projetId = Number(parametres.get('projetId'));
       this.tacheId = Number(parametres.get('tacheId'));
