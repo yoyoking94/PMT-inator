@@ -1,0 +1,221 @@
+<div class="min-h-screen px-6 py-8 max-w-4xl mx-auto" style="color: #0b1215">
+  <a routerLink="/projets" class="text-sm underline hover:opacity-70">← Retour aux projets</a>
+
+  @if (projet) {
+    <div class="mt-6 mb-8">
+      <h1 class="text-2xl font-bold">{{ projet.nom }}</h1>
+      <p class="text-gray-600 mt-2">{{ projet.description }}</p>
+      <div class="flex gap-6 mt-3 text-sm text-gray-500">
+        <span>Début : {{ projet.dateDeDebut }}</span>
+        <span>Admin : {{ projet.administrateur.username }}</span>
+      </div>
+    </div>
+  }
+
+  @if (messageErreur) {
+    <p class="text-red-600 text-sm mb-4">{{ messageErreur }}</p>
+  }
+  @if (messageSucces) {
+    <p class="text-green-600 text-sm mb-4">{{ messageSucces }}</p>
+  }
+
+  <hr class="border-gray-200 mb-8" />
+
+  <!-- Section membres -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold">Membres</h2>
+
+      <!-- Bouton grisé si l'utilisateur n'est pas ADMINISTRATEUR -->
+      <button
+        (click)="
+          peutGererLesMembres() && (afficherFormulaireInvitation = !afficherFormulaireInvitation)
+        "
+        class="text-sm px-4 py-2 rounded-lg text-white cursor-pointer transition"
+        [style.background-color]="peutGererLesMembres() ? '#0b1215' : '#9ca3af'"
+        [disabled]="!peutGererLesMembres()"
+        [title]="peutGererLesMembres() ? '' : 'Seul un administrateur peut inviter des membres'"
+      >
+        + Inviter un membre
+      </button>
+    </div>
+
+    @if (afficherFormulaireInvitation && peutGererLesMembres()) {
+      <div class="bg-white rounded-2xl shadow-sm p-6 mb-4">
+        <form (ngSubmit)="inviterUnMembre()" class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <label for="emailMembre" class="text-sm font-medium">Email du membre</label>
+            <input
+              id="emailMembre"
+              type="email"
+              [(ngModel)]="invitationRequestDto.email"
+              name="emailMembre"
+              placeholder="membre@email.com"
+              required
+              class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="role" class="text-sm font-medium">Rôle</label>
+            <select
+              id="role"
+              [(ngModel)]="invitationRequestDto.role"
+              name="role"
+              class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              @for (role of listeRoles; track role) {
+                <option [value]="role">{{ role }}</option>
+              }
+            </select>
+          </div>
+          <div class="flex gap-2">
+            <button
+              type="submit"
+              class="px-4 py-2 rounded-lg text-sm font-semibold text-white cursor-pointer"
+              style="background-color: #0b1215"
+            >
+              Inviter
+            </button>
+            <button
+              type="button"
+              (click)="afficherFormulaireInvitation = false"
+              class="px-4 py-2 rounded-lg text-sm border border-gray-300 hover:bg-gray-100 cursor-pointer"
+            >
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    @if (listeMembres.length === 0) {
+      <p class="text-sm text-gray-500">Aucun membre dans ce projet.</p>
+    } @else {
+      <ul class="flex flex-col gap-2">
+        @for (membre of listeMembres; track membre.id) {
+          <li
+            class="bg-white rounded-xl px-4 py-3 shadow-sm flex justify-between items-center text-sm"
+          >
+            <span class="font-medium">{{ membre.utilisateur.username }}</span>
+            <span class="text-gray-500">{{ membre.role }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <hr class="border-gray-200 mb-8" />
+
+  <!-- Section tâches -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold">Tâches</h2>
+
+      <!-- Bouton grisé si l'utilisateur est OBSERVATEUR ou non membre -->
+      <a
+        [routerLink]="peutGererLesTaches() ? ['/projets', projetId, 'taches', 'nouvelle'] : null"
+        class="text-sm px-4 py-2 rounded-lg text-white transition"
+        [style.background-color]="peutGererLesTaches() ? '#0b1215' : '#9ca3af'"
+        [class.pointer-events-none]="!peutGererLesTaches()"
+        [title]="peutGererLesTaches() ? '' : 'Les observateurs ne peuvent pas créer de tâches'"
+      >
+        + Créer une tâche
+      </a>
+    </div>
+
+    @if (listeTaches.length === 0) {
+      <p class="text-sm text-gray-500">Aucune tâche pour ce projet.</p>
+    } @else {
+      <ul class="flex flex-col gap-3">
+        @for (tache of listeTaches; track tache.id) {
+          <li class="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <a
+              [routerLink]="['/projets', projetId, 'taches', tache.id]"
+              class="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition"
+            >
+              <div class="flex items-center gap-3">
+                <span class="text-base font-semibold" style="color: #0b1215">{{ tache.nom }}</span>
+                <span
+                  class="text-xs font-medium px-2 py-1 rounded-full"
+                  [class.bg-red-100]="tache.priorite === 'HAUTE'"
+                  [class.text-red-700]="tache.priorite === 'HAUTE'"
+                  [class.bg-yellow-100]="tache.priorite === 'MOYENNE'"
+                  [class.text-yellow-700]="tache.priorite === 'MOYENNE'"
+                  [class.bg-green-100]="tache.priorite === 'BASSE'"
+                  [class.text-green-700]="tache.priorite === 'BASSE'"
+                >
+                  {{ tache.priorite }}
+                </span>
+              </div>
+              <div class="flex items-center gap-4 text-sm text-gray-500">
+                <span>👤 {{ tache.membreAssigne.username }}</span>
+                <span>📅 {{ tache.dateEcheant }}</span>
+                @if (tache.dateDeFin) {
+                  <span class="text-green-600 font-medium">✓ Terminé</span>
+                } @else {
+                  <span class="text-orange-500">En cours</span>
+                }
+                <button
+                  (click)="
+                    selectionnerUneTache(tache); $event.preventDefault(); $event.stopPropagation()
+                  "
+                  class="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-200 transition cursor-pointer text-gray-400"
+                >
+                  {{ tacheSelectionnee?.id === tache.id ? '▲' : '▼' }}
+                </button>
+              </div>
+            </a>
+
+            @if (tacheSelectionnee?.id === tache.id) {
+              <div class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+                <p class="text-sm text-gray-600 mb-4">{{ tache.description }}</p>
+                <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                  <div>
+                    <span class="text-gray-400">Assigné à</span>
+                    <p class="font-medium mt-1">{{ tache.membreAssigne.username }}</p>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Date d'échéance</span>
+                    <p class="font-medium mt-1">{{ tache.dateEcheant }}</p>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Statut</span>
+                    @if (tache.dateDeFin) {
+                      <p class="font-medium mt-1 text-green-600">
+                        ✓ Terminé le {{ tache.dateDeFin }}
+                      </p>
+                    } @else {
+                      <p class="font-medium mt-1 text-orange-500">En cours</p>
+                    }
+                  </div>
+                </div>
+
+                <!-- Bouton modifier grisé si observateur ou non membre -->
+                <a
+                  [routerLink]="
+                    peutGererLesTaches()
+                      ? ['/projets', projetId, 'taches', tache.id, 'modifier']
+                      : null
+                  "
+                  class="inline-block text-sm px-4 py-2 rounded-lg border transition"
+                  [class.border-gray-300]="peutGererLesTaches()"
+                  [class.hover:bg-white]="peutGererLesTaches()"
+                  [class.border-gray-200]="!peutGererLesTaches()"
+                  [class.text-gray-400]="!peutGererLesTaches()"
+                  [class.pointer-events-none]="!peutGererLesTaches()"
+                  [title]="
+                    peutGererLesTaches()
+                      ? ''
+                      : 'Les observateurs ne peuvent pas modifier les tâches'
+                  "
+                >
+                  ✏️ Modifier
+                </a>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

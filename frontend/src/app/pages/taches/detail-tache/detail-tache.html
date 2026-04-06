@@ -1,0 +1,87 @@
+<div class="min-h-screen px-6 py-8 max-w-4xl mx-auto" style="color: #0b1215">
+  <a [routerLink]="['/projets', projetId, 'taches']" class="text-sm underline hover:opacity-70">
+    ← Retour aux tâches
+  </a>
+
+  @if (messageErreur) {
+    <p class="text-red-600 text-sm mt-4">{{ messageErreur }}</p>
+  }
+
+  @if (tache) {
+    <div class="mt-6 bg-white rounded-2xl shadow-sm p-6 mb-8">
+      <div class="flex items-start justify-between mb-4">
+        <h1 class="text-2xl font-bold">{{ tache.nom }}</h1>
+        <a
+          [routerLink]="['/projets', projetId, 'taches', tacheId, 'modifier']"
+          class="text-sm px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 cursor-pointer"
+        >
+          ✏️ Modifier
+        </a>
+      </div>
+
+      <p class="text-gray-600 mb-4">{{ tache.description }}</p>
+
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <span class="text-gray-400">Priorité</span>
+          <p class="font-medium mt-1">
+            <span
+              class="px-2 py-1 rounded-full text-xs font-semibold"
+              [class.bg-red-100]="tache.priorite === 'HAUTE'"
+              [class.text-red-700]="tache.priorite === 'HAUTE'"
+              [class.bg-yellow-100]="tache.priorite === 'MOYENNE'"
+              [class.text-yellow-700]="tache.priorite === 'MOYENNE'"
+              [class.bg-green-100]="tache.priorite === 'BASSE'"
+              [class.text-green-700]="tache.priorite === 'BASSE'"
+            >
+              {{ tache.priorite }}
+            </span>
+          </p>
+        </div>
+
+        <div>
+          <span class="text-gray-400">Assigné à</span>
+          <p class="font-medium mt-1">{{ tache.membreAssigne.username }}</p>
+        </div>
+
+        <div>
+          <span class="text-gray-400">Date d'échéance</span>
+          <p class="font-medium mt-1">{{ tache.dateEcheant }}</p>
+        </div>
+
+        <div>
+          <span class="text-gray-400">Statut</span>
+          @if (tache.dateDeFin) {
+            <p class="font-medium mt-1 text-green-600">✓ Terminé le {{ tache.dateDeFin }}</p>
+          } @else {
+            <p class="font-medium mt-1 text-orange-500">En cours</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Historique -->
+  <div>
+    <h2 class="text-lg font-semibold mb-4">Historique des modifications</h2>
+
+    @if (listeHistoriques.length === 0) {
+      <p class="text-sm text-gray-500">Aucune modification enregistrée.</p>
+    } @else {
+      <ul class="flex flex-col gap-3">
+        @for (historique of listeHistoriques; track historique.id) {
+          <li class="bg-white rounded-xl px-4 py-3 shadow-sm text-sm">
+            <p>
+              <span class="font-medium">{{ historique.champModifie }}</span> :
+              <span class="text-gray-400 line-through">{{ historique.ancienneValeur }}</span>
+              → <span class="font-medium">{{ historique.nouvelleValeur }}</span>
+            </p>
+            <p class="text-xs text-gray-400 mt-1">
+              Par {{ historique.modifiePar.username }} · {{ historique.dateDeModification }}
+            </p>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

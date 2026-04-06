@@ -1,0 +1,59 @@
+<div class="min-h-screen flex items-center justify-center" style="background-color: #f7f4e7">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
+    <h1 class="text-2xl font-bold mb-6 text-center" style="color: #0b1215">Connexion</h1>
+
+    <form (ngSubmit)="connecter()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-sm font-medium" style="color: #0b1215"> Email </label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="votre@email.com"
+          required
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+          style="color: #0b1215"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="motDePasse" class="text-sm font-medium" style="color: #0b1215">
+          Mot de passe
+        </label>
+        <input
+          id="motDePasse"
+          type="password"
+          [(ngModel)]="motDePasse"
+          name="motDePasse"
+          placeholder="Votre mot de passe"
+          required
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+          style="color: #0b1215"
+        />
+      </div>
+
+      @if (messageErreur) {
+        <p class="text-red-600 text-sm">{{ messageErreur }}</p>
+      }
+
+      <button
+        type="submit"
+        [disabled]="chargementEnCours"
+        class="mt-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50 cursor-pointer"
+        style="background-color: #0b1215"
+      >
+        @if (chargementEnCours) {
+          Connexion en cours...
+        } @else {
+          Se connecter
+        }
+      </button>
+    </form>
+
+    <p class="text-sm text-center mt-4" style="color: #0b1215">
+      Pas encore de compte ?
+      <a routerLink="/inscription" class="font-semibold underline">S'inscrire</a>
+    </p>
+  </div>
+</div>

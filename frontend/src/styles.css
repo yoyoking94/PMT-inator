@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+:root {
+  --couleur-fond: #f7f4e7;
+  --couleur-texte: #0b1215;
+}
+
+body {
+  background-color: var(--couleur-fond);
+  color: var(--couleur-texte);
+}

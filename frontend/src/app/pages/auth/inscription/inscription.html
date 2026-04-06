@@ -1,0 +1,75 @@
+<div class="min-h-screen flex items-center justify-center" style="background-color: #f7f4e7">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
+    <h1 class="text-2xl font-bold mb-6 text-center" style="color: #0b1215">Inscription</h1>
+
+    <form (ngSubmit)="inscrire()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="username" class="text-sm font-medium" style="color: #0b1215">
+          Nom d'utilisateur
+        </label>
+        <input
+          id="username"
+          type="text"
+          [(ngModel)]="utilisateurRequestDto.username"
+          name="username"
+          placeholder="jean.dupont"
+          required
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+          style="color: #0b1215"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-sm font-medium" style="color: #0b1215"> Email </label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="utilisateurRequestDto.email"
+          name="email"
+          placeholder="votre@email.com"
+          required
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+          style="color: #0b1215"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="password" class="text-sm font-medium" style="color: #0b1215">
+          Mot de passe
+        </label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="utilisateurRequestDto.password"
+          name="password"
+          placeholder="Votre mot de passe"
+          required
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+          style="color: #0b1215"
+        />
+      </div>
+
+      @if (messageErreur) {
+        <p class="text-red-600 text-sm">{{ messageErreur }}</p>
+      }
+
+      <button
+        type="submit"
+        [disabled]="chargementEnCours"
+        class="mt-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50 cursor-pointer"
+        style="background-color: #0b1215"
+      >
+        @if (chargementEnCours) {
+          Inscription en cours...
+        } @else {
+          S'inscrire
+        }
+      </button>
+    </form>
+
+    <p class="text-sm text-center mt-4" style="color: #0b1215">
+      Déjà un compte ?
+      <a routerLink="/connexion" class="font-semibold underline">Se connecter</a>
+    </p>
+  </div>
+</div>

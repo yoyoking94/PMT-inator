@@ -1,0 +1,117 @@
+<div class="min-h-screen px-6 py-8 max-w-2xl mx-auto" style="color: #0b1215">
+  <a [routerLink]="['/projets', projetId, 'taches']" class="text-sm underline hover:opacity-70">
+    ← Retour aux tâches
+  </a>
+
+  <h1 class="text-2xl font-bold mt-6 mb-8">
+    @if (estEnModeModification) {
+      Modifier la tâche
+    } @else {
+      Créer une tâche
+    }
+  </h1>
+
+  @if (messageErreur) {
+    <p class="text-red-600 text-sm mb-4">{{ messageErreur }}</p>
+  }
+
+  <div class="bg-white rounded-2xl shadow-sm p-6">
+    <form (ngSubmit)="enregistrer()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="nom" class="text-sm font-medium">Nom de la tâche</label>
+        <input
+          id="nom"
+          type="text"
+          [(ngModel)]="tacheRequestDto.nom"
+          name="nom"
+          placeholder="Nom de la tâche"
+          required
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="description" class="text-sm font-medium">Description</label>
+        <textarea
+          id="description"
+          [(ngModel)]="tacheRequestDto.description"
+          name="description"
+          placeholder="Description de la tâche"
+          required
+          rows="3"
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+        ></textarea>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="dateEcheant" class="text-sm font-medium">Date d'échéance</label>
+        <input
+          id="dateEcheant"
+          type="date"
+          [(ngModel)]="tacheRequestDto.dateEcheant"
+          name="dateEcheant"
+          required
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="priorite" class="text-sm font-medium">Priorité</label>
+        <select
+          id="priorite"
+          [(ngModel)]="tacheRequestDto.priorite"
+          name="priorite"
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          @for (priorite of listePriorities; track priorite) {
+            <option [value]="priorite">{{ priorite }}</option>
+          }
+        </select>
+      </div>
+
+      @if (!estEnModeModification) {
+        <div class="flex flex-col gap-1">
+          <label for="membreAssigne" class="text-sm font-medium">Assigner à</label>
+          <select
+            id="membreAssigne"
+            [(ngModel)]="membreAssigneIdSelectionne"
+            name="membreAssigne"
+            required
+            class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+          >
+            <option [value]="0" disabled>Choisir un membre</option>
+            @for (membre of listeMembres; track membre.id) {
+              <option [value]="membre.utilisateur.id">
+                {{ membre.utilisateur.username }}
+              </option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="flex gap-2 mt-2">
+        <button
+          type="submit"
+          [disabled]="chargementEnCours"
+          class="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50 cursor-pointer"
+          style="background-color: #0b1215"
+        >
+          @if (chargementEnCours) {
+            Enregistrement...
+          } @else if (estEnModeModification) {
+            Modifier
+          } @else {
+            Créer
+          }
+        </button>
+        <button
+          type="button"
+          [routerLink]="['/projets', projetId, 'taches']"
+          class="px-4 py-2 rounded-lg text-sm border border-gray-300 hover:bg-gray-100 cursor-pointer"
+        >
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

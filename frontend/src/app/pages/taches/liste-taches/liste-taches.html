@@ -1,0 +1,58 @@
+<div class="min-h-screen px-6 py-8 max-w-4xl mx-auto" style="color: #0b1215">
+  <a [routerLink]="['/projets', projetId]" class="text-sm underline hover:opacity-70">
+    ← Retour au projet
+  </a>
+
+  <div class="flex items-center justify-between mt-6 mb-8">
+    <h1 class="text-2xl font-bold">Tâches</h1>
+    <a
+      [routerLink]="['/projets', projetId, 'taches', 'nouvelle']"
+      class="text-sm px-4 py-2 rounded-lg text-white cursor-pointer"
+      style="background-color: #0b1215"
+    >
+      + Créer une tâche
+    </a>
+  </div>
+
+  @if (messageErreur) {
+    <p class="text-red-600 text-sm mb-4">{{ messageErreur }}</p>
+  }
+
+  @if (listeTaches.length === 0) {
+    <p class="text-gray-500 text-sm">Aucune tâche pour ce projet.</p>
+  } @else {
+    <ul class="flex flex-col gap-4">
+      @for (tache of listeTaches; track tache.id) {
+        <li class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition">
+          <a [routerLink]="['/projets', projetId, 'taches', tache.id]" class="block">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-base font-semibold hover:underline">{{ tache.nom }}</h2>
+
+              <span
+                class="text-xs font-medium px-2 py-1 rounded-full"
+                [class.bg-red-100]="tache.priorite === 'HAUTE'"
+                [class.text-red-700]="tache.priorite === 'HAUTE'"
+                [class.bg-yellow-100]="tache.priorite === 'MOYENNE'"
+                [class.text-yellow-700]="tache.priorite === 'MOYENNE'"
+                [class.bg-green-100]="tache.priorite === 'BASSE'"
+                [class.text-green-700]="tache.priorite === 'BASSE'"
+              >
+                {{ tache.priorite }}
+              </span>
+            </div>
+
+            <div class="text-sm text-gray-500 flex gap-4">
+              <span>👤 {{ tache.membreAssigne.username }}</span>
+              <span>📅 {{ tache.dateEcheant }}</span>
+              @if (tache.dateDeFin) {
+                <span class="text-green-600 font-medium">✓ Terminé</span>
+              } @else {
+                <span class="text-orange-500">En cours</span>
+              }
+            </div>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</div>
